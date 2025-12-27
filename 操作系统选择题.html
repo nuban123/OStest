@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>操作系统选择题随机测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        
+        .question-container {
+            margin-bottom: 20px;
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .option.selected {
+            background-color: #e1f5fe;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .option.correct {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .option.incorrect {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        button:hover {
+            background-color: #1976d2;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+        
+        .result.pass {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .result.fail {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #2196f3;
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+        }
+        
+        .answer-feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .correct-answer {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .result-details {
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .wrong-question {
+            background-color: #ffebee;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #f44336;
+        }
+        
+        .wrong-answer {
+            color: #c62828;
+        }
+        
+        .correct-answer-detail {
+            color: #2e7d32;
+        }
+        
+        .restart-btn {
+            margin-top: 20px;
+            background-color: #4caf50;
+        }
+        
+        .restart-btn:hover {
+            background-color: #388e3c;
+        }
+        
+        .show-answer-btn {
+            background-color: #9c27b0;
+        }
+        
+        .show-answer-btn:hover {
+            background-color: #7b1fa2;
+        }
+        
+        .show-answer-btn:disabled {
+            background-color: #ccc;
+        }
+
+       .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: #2196f3;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 15px;
+            border: 1px solid #2196f3;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .home-link:hover {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body> 
+    <a href="index.html" class="home-link">返回主页</a>
+    <div class="container">
+        <h1>操作系统选择题随机测试</h1>
+        
+        <div class="info-bar">
+            <div>当前题号: <span id="current-question">1</span>/<span id="total-questions">20</span></div>
+            <div>已答: <span id="answered-count">0</span>/20</div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="question-container" id="question-container">
+            <!-- 题目将在这里动态生成 -->
+        </div>
+        
+        <div>
+            <button id="show-answer-btn" class="show-answer-btn" disabled>查看答案</button>
+        </div>
+        
+        <div id="answer-feedback" class="answer-feedback">
+            <!-- 答案反馈将在这里显示 -->
+        </div>
+        
+        <div class="controls">
+            <button id="prev-btn" disabled>上一题</button>
+            <button id="next-btn">下一题</button>
+            <button id="submit-btn" style="display: none;">提交答案</button>
+        </div>
+        
+        <div class="result" id="result">
+            <!-- 结果将在这里显示 -->
+        </div>
+    </div>
+
+    <script>
+        // 存储所有题目数据
+        const allQuestions = [
+            {
+                id: 1,
+                question: "操作系统的主要功能是()",
+                options: ["A.控制和管理系统资源", "B.编译高级语言程序", "C.进行数据处理", "D.实现网络连接"],
+                answer: "A"
+            },
+            {
+                id: 2,
+                question: "多道程序设计技术的主要目的是()",
+                options: ["A.提高CPU利用率", "B.提高内存利用率", "C.减少系统开销", "D.扩大外部设备容量"],
+                answer: "A"
+            },
+            {
+                id: 3,
+                question: "在操作系统中，并发性是指()",
+                options: ["A.多个事件在同一时刻发生", "B.多个事件在不同时刻发生", "C.多个事件在同一时间间隔内发生", "D.多个事件互不干扰"],
+                answer: "C"
+            },
+            {
+                id: 4,
+                question: "在下列系统中,()是实时控制系统。",
+                options: ["A.计算机激光照排系统", "B.民航售票系统", "C.办公自动化系统", "D.火箭飞行控制系统"],
+                answer: "D"
+            },
+            {
+                id: 5,
+                question: "推动批处理系统形成和发展的主要动力是()",
+                options: ["A.提高计算机系统的功能", "B.提高系统资源利用率", "C.方便用户", "D.提高系统的运行速度"],
+                answer: "B"
+            },
+            {
+                id: 6,
+                question: "航空航天，核变研究的计算机应用场合，应选择()操作系统。",
+                options: ["A.配置实时操作系统", "B.配置批处理操作系统", "C.配置分时操作系统", "D.配置网络操作系统"],
+                answer: "A"
+            },
+            {
+                id: 7,
+                question: "()操作系统允许一台主机上同时连接多台终端,多个用户可以通过各自的终端同时交互地使用计算机。",
+                options: ["A.网络", "B.分布式", "C.分时", "D.实时"],
+                answer: "C"
+            },
+            {
+                id: 8,
+                question: "在操作系统中，管程是一种()",
+                options: ["A.进程同步", "B.内存管理工具", "C.文件管理工具", "D.设备管理工具"],
+                answer: "A"
+            },
+            {
+                id: 9,
+                question: "在进程状态转换中，从运行状态转换为就绪状态可能是由于()",
+                options: ["A.等待的资源可用", "B.等待I/O操作完成", "C.进程执行结束", "D.时间片用完"],
+                answer: "D"
+            },
+            {
+                id: 10,
+                question: "某系统中有13台磁带机，K个进程共享这些设备，每个进程最多请求使用3台，则系统不会死锁的K值是()",
+                options: ["A.不小于3", "B.不大于6", "C.不大于13", "D.在6与10之间"],
+                answer: "B"
+            },
+            {
+                id: 11,
+                question: "下列哪种调度算法既考虑作业等待时间又考虑执行时间()",
+                options: ["A.先来先服务", "B.短作业优先", "C.高响应比优先", "D.时间片轮转"],
+                answer: "C"
+            },
+            {
+                id: 12,
+                question: "死锁产生的四个必要条件是:互斥、不可剥夺、循环等待和()",
+                options: ["A.请求与保持", "B.部分分配", "C.资源耗尽", "D.进程优先级"],
+                answer: "A"
+            },
+            {
+                id: 13,
+                question: "共享内存方式属于()通信",
+                options: ["A.直接", "B.间接", "C.低级", "D.高级"],
+                answer: "A"
+            },
+            {
+                id: 14,
+                question: "在操作系统中，P、V操作是一种()",
+                options: ["A.机器指令", "B.系统调用命令", "C.作业控制命令", "D.进程同步机制"],
+                answer: "D"
+            },
+            {
+                id: 15,
+                question: "下列进程状态转换中，不可能发生的是()",
+                options: ["A.运行→就绪", "B.运行→阻塞", "C.阻塞→运行", "D.阻塞→就绪"],
+                answer: "C"
+            },
+            {
+                id: 16,
+                question: "设有5个进程共享一个互斥段，如果最多允许两个进程同时进入互斥段,则所采用的互斥信号量初值应该是()。",
+                options: ["A.5", "B.2", "C.1", "D.0"],
+                answer: "B"
+            },
+            {
+                id: 17,
+                question: "最适合分时系统的进程调度算法是()。",
+                options: ["A.先来先服务法", "B.最短时间优先法", "C.优先级法", "D.时间片轮转法"],
+                answer: "D"
+            },
+            {
+                id: 18,
+                question: "在银行家算法中,当进程请求资源时,系统进行()检查",
+                options: ["A.安全性", "B.可用性", "C.完整性", "D.一致性"],
+                answer: "A"
+            },
+            {
+                id: 19,
+                question: "下列哪种情况不会引起进程调度()",
+                options: ["A.进程执行结束", "B.进程处于运行状态", "C.进程请求I/O", "D.时间片用完"],
+                answer: "B"
+            },
+            {
+                id: 20,
+                question: "若记录型信号量S的初值是3,则当前值为1时表示有()个阻塞等待进程。",
+                options: ["A.1个", "B.2个", "C.0个", "D.1个或者2个", "E.3个"],
+                answer: "B"
+            },
+            {
+                id: 21,
+                question: "某进程在运行过程中需要从磁盘上读入数据，此时该进程的状态将()。",
+                options: ["A.从就绪变为运行", "B.从运行变为就绪", "C.从运行变为阻塞", "D.从阻塞变为就绪"],
+                answer: "C"
+            },
+            {
+                id: 22,
+                question: "以下有关资源分配图的描述中，正确的是()。",
+                options: ["A.有向边包括进程指向资源类的分配边和资源类指向进程申请边两类", "B.矩形框表示进程，其中圆点表示申请同一类资源的各个进程", "C.圆圈结点表示资源类", "D.资源分配图是一个有向图，用于表示某时刻系统资源与进程之间的状态"],
+                answer: "D"
+            },
+            {
+                id: 23,
+                question: "死锁的4个必要条件中，无法破坏的是()。",
+                options: ["A.环路等待条件", "B.互斥条件", "C.请求和保持条件", "D.不可抢夺条件"],
+                answer: "B"
+            },
+            {
+                id: 24,
+                question: "下列哪种方法不能解决死锁问题()",
+                options: ["A.预防死锁", "B.避免死锁", "C.检测死锁", "D.忽略死锁"],
+                answer: "D"
+            },
+            {
+                id: 25,
+                question: "虚拟存储技术是基于()原理",
+                options: ["A.局部性", "B.全局性", "C.动态性", "D.静态性"],
+                answer: "A"
+            },
+            {
+                id: 26,
+                question: "在分页存储管理中，页表的主要作用是实现()的映射",
+                options: ["A.段号到物理地址", "B.逻辑地址到物理地址", "C.文件名到物理地址", "D.目录名到物理地址"],
+                answer: "B"
+            },
+            {
+                id: 27,
+                question: "某系统采用页式存储管理，逻辑地址为16位，其中高6位为页号，低10位为页内偏移。则页面大小为()字节",
+                options: ["A.512", "B.1024", "C.2048", "D.64"],
+                answer: "B"
+            },
+            {
+                id: 28,
+                question: "最坏适应算法是按()的顺序形成空闲链。",
+                options: ["A.空闲区起始地址递增", "B.空闲区起始地址递减", "C.空闲区大小递增", "D.空闲区大小递减"],
+                answer: "D"
+            },
+            {
+                id: 29,
+                question: "在虚拟存储系统中，影响缺页次数的因素不包括()",
+                options: ["A.页面大小", "B.内存容量", "C.程序特性", "D.磁盘转速"],
+                answer: "D"
+            },
+            {
+                id: 30,
+                question: "快表(TLB)的作用是()",
+                options: ["A.提高地址转换速度", "B.增加内存容量", "C.减少缺页次数", "D.提高页面置换效率"],
+                answer: "A"
+            },
+            {
+                id: 31,
+                question: "在一个分页存储系统中，逻辑地址结构为16位，页面大小为1KB，则逻辑地址空间最多有()页",
+                options: ["A.16", "B.32", "C.64", "D.128"],
+                answer: "D"
+            },
+            {
+                id: 32,
+                question: "如果要使装入内存的目标程序，在内存中移动后能正常运行，必须要有()。",
+                options: ["A.静态重定位", "B.动态重定位", "C.动态链接", "D.静态链接"],
+                answer: "B"
+            },
+            {
+                id: 33,
+                question: "采用动态分区算法回收内存时，如果回收区仅与空闲区链插入点前一个分区相邻接，那么需要在空闲区链表中()。",
+                options: ["A.增加一个新表项", "B.修改前一个分区表项的大小", "C.修改前一个分区表项的首地址", "D.修改前一个分区表项的大小和首地址"],
+                answer: "B"
+            },
+            {
+                id: 34,
+                question: "在分页存储管理中，页面大小通常为()",
+                options: ["A.2的整数次幂", "B.3的整数次幂", "C.5的整数次幂", "D.任意大小"],
+                answer: "A"
+            },
+            {
+                id: 35,
+                question: "动态重定位是在作业()中进行的。",
+                options: ["A.编译过程", "B.装入过程", "C.修改过程", "D.执行过程"],
+                answer: "D"
+            },
+            {
+                id: 36,
+                question: "在动态分区式内存管理中，能使内存空间中空闲区分布得较均匀的算法是()。",
+                options: ["A.最佳适应算法", "B.最坏适应算法", "C.首次适应算法", "D.循环首次适应算法"],
+                answer: "D"
+            },
+            {
+                id: 37,
+                question: "下列设备中，属于块设备的是()",
+                options: ["A.打印机", "B.显示器", "C.磁盘", "D.鼠标"],
+                answer: "C"
+            },
+            {
+                id: 38,
+                question: "下列I/O控制方式中，CPU干预最少的是()",
+                options: ["A.程序I/O方式", "B.中断驱动I/O方式", "C.DMA方式", "D.通道方式"],
+                answer: "D"
+            },
+            {
+                id: 39,
+                question: "下列磁盘调度算法中，可能会产生饥饿现象的是()",
+                options: ["A.先来先服务(FCFS)", "B.最短寻道时间优先(SSTF)", "C.扫描算法(SCAN)", "D.循环扫描算法(C-SCAN)"],
+                answer: "B"
+            },
+            {
+                id: 40,
+                question: "进程的状态和优先级信息存放在()。",
+                options: ["A.JCB", "B.PCB", "C.快表", "D.页表"],
+                answer: "B"
+            },
+            {
+                id: 41,
+                question: "文件系统的主要目的是()",
+                options: ["A.实现虚拟存储", "B.提高外存利用率", "C.实现对文件的按名存取", "D.提高CPU利用率"],
+                answer: "C"
+            },
+            {
+                id: 42,
+                question: "在文件系统中，文件路径名不包括()",
+                options: ["A.文件名", "B.目录名", "C.磁盘驱动器名", "D.文件内容"],
+                answer: "D"
+            },
+            {
+                id: 43,
+                question: "在文件系统中，文件备份的主要目的是()",
+                options: ["A.提高文件存取速度", "B.实现文件共享", "C.防止文件丢失", "D.减少存储空间"],
+                answer: "C"
+            },
+            {
+                id: 44,
+                question: "在面向用户的调度准则中,()是选择分时系统中进程调度算法的重要准则",
+                options: ["A.响应时间快", "B.平均周转时间短", "C.截止时间的保证", "D.优先权高的作业能获得优先服务"],
+                answer: "A"
+            },
+            {
+                id: 45,
+                question: "使用户所编制的程序与实际使用的物理设备无关是由()功能实现的。",
+                options: ["A.设备分配", "B.缓冲管理", "C.设备独立性", "D.虚拟设备"],
+                answer: "C"
+            },
+            {
+                id: 46,
+                question: "为了使多个进程能有效地同时处理输入和输出，最好使用()。",
+                options: ["A.缓冲池", "B.单缓冲", "C.双缓冲", "D.环形缓冲"],
+                answer: "A"
+            },
+            {
+                id: 47,
+                question: "SPOOLing技术主要用于()",
+                options: ["A.提高CPU利用率", "B.避免死锁", "C.管理文件系统", "D.实现虚拟设备"],
+                answer: "D"
+            },
+            {
+                id: 48,
+                question: "一个进程的读磁盘操作完成后，操作系统针对该进程必做的是()。",
+                options: ["A.修改进程状态为就绪态", "B.降低进程优先级", "C.进程分配用户内存空间", "D.增加进程的时间片大小"],
+                answer: "A"
+            },
+            {
+                id: 49,
+                question: "下列文件操作中，不会改变文件内容的是()",
+                options: ["A.文件写入", "B.文件追加", "C.文件重命名", "D.文件截断"],
+                answer: "C"
+            },
+            {
+                id: 50,
+                question: "在文件系统中，磁盘空间分配的基本单位是()",
+                options: ["A.扇区", "B.簇", "C.段", "D.页"],
+                answer: "B"
+            },
+            {
+                id: 51,
+                question: "下列文件物理结构中，不适合随机存取的是()",
+                options: ["A.顺序结构", "B.链接结构", "C.索引结构", "D.散列结构"],
+                answer: "B"
+            },
+            {
+                id: 52,
+                question: "死锁的4个必要条件中，无法破坏的是()。",
+                options: ["A.环路等待条件", "B.互斥使用资源", "C.占有且等待资源", "D.非抢夺式分配"],
+                answer: "B"
+            },
+            {
+                id: 53,
+                question: "下列设备中，属于字符设备的是()",
+                options: ["A.磁盘", "B.磁带", "C.键盘", "D.光盘"],
+                answer: "C"
+            },
+            {
+                id: 54,
+                question: "对磁盘进行移臂调度其目的是缩短()时间。",
+                options: ["A.启动磁臂", "B.数据传送", "C.寻道", "D.旋转延迟"],
+                answer: "C"
+            },
+            {
+                id: 55,
+                question: "在设备管理中，设备独立性是指()",
+                options: ["A.设备独立于计算机系统", "B.用户程序独立于具体物理设备", "C.设备驱动程序独立于操作系统", "D.设备控制器独立于CPU"],
+                answer: "B"
+            },
+            {
+                id: 56,
+                question: "下列选项中，会导致进程从执行态变为就绪态的事件是()。",
+                options: ["A.执行P操作", "B.申请内存失败", "C.启动I/O设备", "D.被高优先级进程抢占"],
+                answer: "D"
+            },
+            {
+                id: 57,
+                question: "下列文件目录结构中，不能解决文件重名问题的是()",
+                options: ["A.单级目录", "B.两级目录", "C.多级目录", "D.树形目录"],
+                answer: "A"
+            },
+            {
+                id: 58,
+                question: "文件系统的主要目的是()",
+                options: ["A.实现虚拟存储", "B.提高外存利用率", "C.实现对文件的按名存取", "D.提高CPU利用率"],
+                answer: "C"
+            },
+            {
+                id: 59,
+                question: "在下列物理文件中，()将使文件顺序访问的速度最快。",
+                options: ["A.顺序文件", "B.隐式链接文件", "C.索引文件", "D.直接文件"],
+                answer: "A"
+            },
+            {
+                id: 60,
+                question: "在面向用户的调度准则中,()是选择实时调度算法的重要准则。",
+                options: ["A.响应时间快", "B.平均周转时间短", "C.截止时间的保证", "D.优先权高的作业能获得优先服务"],
+                answer: "C"
+            }
+        ];
+
+        // 从所有题目中随机抽取20道
+        function getRandomQuestions(allQuestions, count) {
+            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        // 当前测试状态
+        let currentTest = {
+            questions: [],
+            currentIndex: 0,
+            userAnswers: [],
+            score: 0,
+            submitted: false
+        };
+
+        // DOM元素
+        const questionContainer = document.getElementById('question-container');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const answeredCountSpan = document.getElementById('answered-count');
+        const progressBar = document.getElementById('progress');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultDiv = document.getElementById('result');
+        const answerFeedback = document.getElementById('answer-feedback');
+        const showAnswerBtn = document.getElementById('show-answer-btn');
+
+        // 初始化测试
+        function initTest() {
+            currentTest.questions = getRandomQuestions(allQuestions, 20);
+            currentTest.currentIndex = 0;
+            currentTest.userAnswers = new Array(20).fill(null);
+            currentTest.score = 0;
+            currentTest.submitted = false;
+            
+            totalQuestionsSpan.textContent = '20';
+            resultDiv.style.display = 'none';
+            answerFeedback.style.display = 'none';
+            updateProgress();
+            displayQuestion();
+            updateButtons();
+        }
+
+        // 显示当前题目
+        function displayQuestion() {
+            const question = currentTest.questions[currentTest.currentIndex];
+            currentQuestionSpan.textContent = currentTest.currentIndex + 1;
+            
+            let html = `<div class="question">${currentTest.currentIndex + 1}. ${question.question}</div>`;
+            html += '<div class="options">';
+            
+            question.options.forEach((option, index) => {
+                const optionLetter = option.charAt(0);
+                const isSelected = currentTest.userAnswers[currentTest.currentIndex] === optionLetter;
+                const isCorrect = currentTest.submitted && optionLetter === question.answer;
+                const isIncorrect = currentTest.submitted && isSelected && optionLetter !== question.answer;
+                
+                let className = 'option';
+                if (isSelected) className += ' selected';
+                if (isCorrect) className += ' correct';
+                if (isIncorrect) className += ' incorrect';
+                
+                html += `<div class="${className}" data-option="${optionLetter}">${option}</div>`;
+            });
+            
+            html += '</div>';
+            questionContainer.innerHTML = html;
+            
+            // 添加选项点击事件
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    if (!currentTest.submitted) {
+                        selectOption(option.dataset.option);
+                    }
+                });
+            });
+        }
+
+        // 选择选项
+        function selectOption(option) {
+            currentTest.userAnswers[currentTest.currentIndex] = option;
+            updateProgress();
+            updateButtons();
+            
+            // 隐藏之前的答案反馈
+            answerFeedback.style.display = 'none';
+            
+            // 如果测试未提交，启用查看答案按钮
+            if (!currentTest.submitted) {
+                showAnswerBtn.disabled = false;
+            }
+            
+            displayQuestion();
+        }
+
+        // 显示答案
+        function showAnswer() {
+            const currentQuestion = currentTest.questions[currentTest.currentIndex];
+            const correctOption = currentQuestion.options.find(opt => opt.charAt(0) === currentQuestion.answer);
+            
+            answerFeedback.innerHTML = `
+                <div class="correct-answer">
+                    <strong>正确答案：${correctOption}</strong>
+                </div>
+            `;
+            answerFeedback.className = 'answer-feedback correct-answer';
+            answerFeedback.style.display = 'block';
+            
+            // 禁用查看答案按钮
+            showAnswerBtn.disabled = true;
+            
+            // 添加动画效果
+            answerFeedback.style.animation = 'slideIn 0.3s forwards';
+        }
+
+        // 更新进度条和已答题数
+        function updateProgress() {
+            const answeredCount = currentTest.userAnswers.filter(answer => answer !== null).length;
+            answeredCountSpan.textContent = answeredCount;
+            progressBar.style.width = `${(answeredCount / 20) * 100}%`;
+        }
+
+        // 更新按钮状态
+        function updateButtons() {
+            prevBtn.disabled = currentTest.currentIndex === 0;
+            
+            if (currentTest.currentIndex === 19) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+            
+            // 如果已提交，禁用所有按钮
+            if (currentTest.submitted) {
+                showAnswerBtn.disabled = true;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                submitBtn.disabled = true;
+            } else {
+                // 如果当前题已答，启用查看答案按钮
+                const hasAnswered = currentTest.userAnswers[currentTest.currentIndex] !== null;
+                showAnswerBtn.disabled = !hasAnswered;
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentTest.currentIndex < 19) {
+                currentTest.currentIndex++;
+                answerFeedback.style.display = 'none';
+                showAnswerBtn.disabled = currentTest.userAnswers[currentTest.currentIndex] === null;
+                displayQuestion();
+                updateButtons();
+            }
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentTest.currentIndex > 0) {
+                currentTest.currentIndex--;
+                answerFeedback.style.display = 'none';
+                showAnswerBtn.disabled = currentTest.userAnswers[currentTest.currentIndex] === null;
+                displayQuestion();
+                updateButtons();
+            }
+        }
+
+        // 提交答案
+        function submitAnswers() {
+            currentTest.submitted = true;
+            
+            // 计算得分
+            currentTest.score = 0;
+            const wrongQuestions = [];
+            
+            currentTest.questions.forEach((question, index) => {
+                if (currentTest.userAnswers[index] === question.answer) {
+                    currentTest.score++;
+                } else {
+                    wrongQuestions.push({
+                        question: question.question,
+                        userAnswer: currentTest.userAnswers[index] || '未作答',
+                        correctAnswer: question.answer,
+                        options: question.options
+                    });
+                }
+            });
+            
+            // 显示结果
+            const pass = currentTest.score >= 12;
+            resultDiv.className = `result ${pass ? 'pass' : 'fail'}`;
+            
+            let resultHtml = `
+                <h2>${pass ? '🎉 恭喜您通过测试！' : '😢 很遗憾，您未通过测试'}</h2>
+                <div class="score">得分: ${currentTest.score}/20 (${(currentTest.score/20*100).toFixed(1)}%)</div>
+                <p>${pass ? '您已掌握操作系统的基本知识。' : '建议您复习相关知识点后再试。'}</p>
+            `;
+            
+            // 显示错题详情
+            if (wrongQuestions.length > 0) {
+                resultHtml += `
+                    <div class="result-details">
+                        <h3>错题分析 (共${wrongQuestions.length}题)：</h3>
+                `;
+                
+                wrongQuestions.forEach((wrong, index) => {
+                    const correctOption = wrong.options.find(opt => opt.charAt(0) === wrong.correctAnswer);
+                    resultHtml += `
+                        <div class="wrong-question">
+                            <p><strong>第${index + 1}题：${wrong.question}</strong></p>
+                            <p class="wrong-answer">❌ 您的答案：${wrong.userAnswer}</p>
+                            <p class="correct-answer-detail">✅ 正确答案：${correctOption}</p>
+                        </div>
+                    `;
+                });
+                
+                resultHtml += '</div>';
+            }
+            
+            // 修改这里：将重新测试按钮改为刷新网页
+            resultHtml += '<button id="restart-test-btn" class="restart-btn" onclick="location.reload()">重新开始测试</button>';
+            resultDiv.innerHTML = resultHtml;
+            resultDiv.style.display = 'block';
+            
+            updateButtons();
+            displayQuestion();
+        }
+
+        // 事件监听
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', nextQuestion);
+        submitBtn.addEventListener('click', submitAnswers);
+        showAnswerBtn.addEventListener('click', showAnswer);
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+                nextQuestion();
+            } else if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+                prevQuestion();
+            } else if (e.key >= '1' && e.key <= '4' && !currentTest.submitted) {
+                // 数字键1-4选择答案
+                const optionLetter = String.fromCharCode('A'.charCodeAt(0) + parseInt(e.key) - 1);
+                const options = currentTest.questions[currentTest.currentIndex]?.options || [];
+                if (options.some(opt => opt.charAt(0) === optionLetter)) {
+                    selectOption(optionLetter);
+                }
+            } else if (e.key === 'Enter' && !currentTest.submitted) {
+                // Enter键提交
+                if (currentTest.currentIndex === 19) {
+                    submitAnswers();
+                } else {
+                    nextQuestion();
+                }
+            }
+        });
+
+        // 初始化
+        window.onload = initTest;
+    </script>
+</body>
+</html>
