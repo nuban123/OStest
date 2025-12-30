@@ -742,7 +742,7 @@
                 resultHtml += '</div>';
             }
             
-            resultHtml += '<button id="restart-test-btn" class="restart-btn">重新开始测试</button>';
+            resultHtml += '<button id="restart-test-btn" class="restart-btn" onclick="location.reload()">重新开始测试</button>';
             resultDiv.innerHTML = resultHtml;
             resultDiv.style.display = 'block';
             
@@ -785,4 +785,5 @@
         window.onload = initTest;
     </script>
 </body>
+
 </html>
